@@ -2,6 +2,7 @@ asgiref==3.8.1
 crispy-bootstrap5==2025.4
 Django==5.2.1
 django-crispy-forms==2.4
+django-extensions==4.1
 django-widget-tweaks==1.5.0
 pytz==2025.2
 sqlparse==0.5.3
