@@ -1,0 +1,30 @@
+<!-- templates/member/user_list.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>사용자 목록</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">👥 사용자 목록</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {% for member in members %}
+        <div class="bg-white rounded-xl shadow p-4 flex flex-col justify-between h-full hover:shadow-lg transition">
+          <div>
+            <h2 class="text-lg font-bold text-blue-800 mb-1">{{ member.name }}</h2>
+            <p class="text-sm text-gray-600">성별: {{ member.get_gender_display }}</p>
+            <p class="text-sm text-gray-600">그룹: {{ member.group.name }}</p>
+            <p class="text-sm text-gray-500 mt-1 text-xs">전화번호: {{ member.phone_number }}</p>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-gray-500 col-span-full">등록된 사용자가 없습니다.</p>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>

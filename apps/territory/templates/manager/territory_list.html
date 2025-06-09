@@ -1,0 +1,98 @@
+{% extends "base_with_tailwind.html" %}
+{% block content %}
+<div class="max-w-5xl mx-auto mt-10 bg-white p-6 rounded shadow">
+    <!-- 🔙 위쪽 되돌아가기 링크 -->
+    <div class="mb-4 text-center">
+        <a href="{% url 'territory_manager:select_congregation' %}" class="text-blue-600 hover:underline text-sm">
+            ← 구역 선택으로 돌아가기
+        </a>
+    </div>
+
+    <h2 class="text-2xl font-bold mb-4">📋 {{ congregation.name }} - Territory 목록</h2>
+
+    <form method="post">
+    {% csrf_token %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-left border">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="p-2"><input type="checkbox" id="select_all" onclick="toggleAll(this)"></th>
+                    <th class="p-2">Code</th>
+                    <th class="p-2">Address</th>
+                    <th class="p-2">Detail</th>
+                    <th class="p-2">Last Visit</th>
+                    <th class="p-2">Assigned To</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for territory in page_obj %}
+                <tr class="border-t {{ territory.row_class }}">
+                    <td class="p-2">
+                        <input type="checkbox" name="selected_territories" value="{{ territory.id }}">
+                    </td>
+                    <td class="p-2">{{ territory.code }}</td>
+                    <td class="p-2">{{ territory.address1 }} {{ territory.address2 }}</td>
+                    <td class="p-2 text-xs text-gray-600">{{ territory.address_detail }}</td>
+                    <td class="p-2 text-xs text-gray-600">
+                        {% if territory.last_visit %}
+                            {{ territory.last_visit.visited_at|date:"Y-m-d" }}
+                        {% else %}
+                            <span class="text-gray-400">없음</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-2">
+                        {{ territory.assigned_to.name|default:"-" }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="flex items-center mt-4 space-x-4">
+        <select name="member_id" class="border rounded px-2 py-1">
+            <option value="">멤버 선택</option>
+            {% for member in members %}
+            <option value="{{ member.id }}">{{ member.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button name="action" value="assign" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+            할당
+        </button>
+        <button name="action" value="unassign" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+            할당 취소
+        </button>
+    </div>
+</form>
+
+    <!-- ✅ Pagination -->
+    <div class="mt-6">
+        <nav class="flex justify-center space-x-2">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">이전</a>
+            {% endif %}
+            <span class="px-3 py-1 bg-gray-100 rounded">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">다음</a>
+            {% endif %}
+        </nav>
+    </div>
+
+    <!-- 🔙 아래쪽 되돌아가기 링크 -->
+    <div class="mt-6 text-center">
+        <a href="{% url 'territory_manager:select_congregation' %}" class="text-blue-600 hover:underline text-sm">
+            ← 구역 선택으로 돌아가기
+        </a>
+    </div>
+</div>
+
+<script>
+function toggleAll(source) {
+    checkboxes = document.getElementsByName('selected_territories');
+    for (let i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+</script>
+{% endblock %}
