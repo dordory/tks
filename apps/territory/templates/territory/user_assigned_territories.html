@@ -91,8 +91,8 @@
           {% else %}
           <p class="mt-2 text-xs text-gray-400">📭 방문 기록 없음</p>
           {% endif %}
-          {% if territory.assigned_to %}
-          <p class="mt-2 text-xs text-gray-500">🕒 임명된 봉사자: {{ territory.assigned_to }}</p>
+          {% if territory.private_assigned_to %}
+          <p class="mt-2 text-xs text-gray-500">🕒 개인구역 봉사자: {{ territory.private_assigned_to }}</p>
           {% else %}
           <p class="mt-2 text-xs text-gray-400">📭 임명된 봉사자 없음</p>
           {% endif %}

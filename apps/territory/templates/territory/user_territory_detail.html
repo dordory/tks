@@ -29,7 +29,7 @@
         <div class="bg-white p-4 rounded shadow space-y-4">
             <p><strong>코드:</strong> {{ territory.code }}</p>
             <p><strong>주소:</strong> {{ territory.address1 }} {{ territory.address2 }} {{ territory.address_detail }}</p>
-            <p><strong>봉사자:</strong> {{ territory.assigned_to }}</p>
+            <p><strong>봉사자:</strong> {{ territory.assigned_to|default:territory.private_assigned_to }}</p>
 
             <div class="mt-10">
                 <form method="post" action="{% url 'territory:update_territory_info' territory.id %}">

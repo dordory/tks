@@ -129,7 +129,11 @@ def user_territory_detail(request, member_id, territory_id):
     if not member_id:
         return redirect('territory:user_login')
 
-    territory = get_object_or_404(Territory, id=territory_id, assigned_to_id=member_id)
+    territory = get_object_or_404(
+        Territory,
+        Q(id=territory_id),
+        Q(assigned_to_id=member_id) | Q(private_assigned_to_id=member_id)
+    )
     visits = VisitHistory.objects.filter(territory=territory).order_by('-visited_at')
     categories = TerritoryCategory.objects.all()
 
