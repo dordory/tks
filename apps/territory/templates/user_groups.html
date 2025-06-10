@@ -1,0 +1,25 @@
+{% extends "base_with_tailwind.html" %}
+
+{% block title %}그룹 선택{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <h2 class="text-xl sm:text-2xl font-bold mb-6 text-center text-gray-800">👥 그룹 선택</h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
+    {% for group in groups %}
+      <a href="{% url 'territory:user_login' %}?group_id={{ group.id }}"
+         class="bg-white rounded-xl shadow p-4 flex flex-col justify-between min-h-[140px] hover:shadow-lg transition border border-gray-200 text-center">
+        <div class="text-blue-800 text-lg font-semibold mb-2 break-keep">
+          {{ group.name }}
+        </div>
+        <div class="text-sm text-gray-500">
+          소속 멤버 수: {{ group.members.count }}
+        </div>
+      </a>
+    {% empty %}
+      <p class="text-gray-500 col-span-full text-center">등록된 그룹이 없습니다.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

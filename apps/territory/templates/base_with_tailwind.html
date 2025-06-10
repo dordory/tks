@@ -1,46 +1,52 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Territory Manager{% endblock %}</title>
+  <meta charset="UTF-8">
+  <title>{% block title %}Territory Manager{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- ✅ Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ✅ Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- ✅ Tailwind custom config (optional) -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        ivory: '#fdfaf6',
-                    }
-                }
-            }
+  <!-- ✅ Tailwind custom config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ivory: '#fdfaf6',
+          }
         }
-    </script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+      }
+    }
+  </script>
 
-    {% block extra_head %}{% endblock %}
+  <!-- ✅ Alpine.js (선택 사항) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-    <!-- ✅ Navigation/Header -->
-    <header class="bg-white shadow p-4 mb-6">
-        <div class="max-w-6xl mx-auto">
-            <h1 class="text-2xl font-bold text-gray-800">📍 Territory Management</h1>
-        </div>
-    </header>
+  <!-- ✅ Header -->
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+      <h1 class="text-2xl font-bold text-gray-800">📍 Territory Management</h1>
+    </div>
+  </header>
 
-    <!-- ✅ Main Content -->
-    <main class="flex-grow max-w-64xl mx-auto px-4">
-        {% block content %}{% endblock %}
-    </main>
+  <!-- ✅ Main Content -->
+  <main class="flex-grow">
+    <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
 
-    <!-- ✅ Footer -->
-    <footer class="bg-gray-200 text-center text-sm py-4 mt-8">
-        &copy; {{ now.year }} Territory Management System
-    </footer>
+  <!-- ✅ Footer -->
+  <footer class="bg-gray-200 text-center text-sm text-gray-600 py-4">
+    &copy; {{ now.year }} Territory Management System
+  </footer>
 
 </body>
 </html>

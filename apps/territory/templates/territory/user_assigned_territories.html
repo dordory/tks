@@ -1,28 +1,32 @@
 {% load static %}
 {% load tz %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>{{ congregation.name }}의 Territory 목록</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 </head>
-<body class="bg-gray-100 p-6">
+<body class="bg-gray-100 p-2">
 
-<div class="bg-white shadow rounded-lg p-6">
+<div class="bg-white shadow rounded-lg p-2">
   <h2 class="text-2xl font-bold mb-6 text-gray-800">🗂️ 할당된 구역 목록</h2>
 
   {% if territories %}
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+  <div class="swiper mySwiper">
+  <div class="swiper-wrapper">
     {% for territory in territories %}
-    <div
-      class="rounded shadow p-4 flex flex-col justify-between h-full territory-card
-             {% if territory.visit_status == 'today' %}bg-green-100 border border-green-300
-             {% elif territory.visit_status == 'old' %}bg-red-100 border border-red-300
-             {% elif territory.visit_status == 'warning' %}bg-orange-100 border border-orange-300
-             {% else %}bg-amber-50{% endif %}"
-    >
-      <div>
+    <div class="swiper-slide">
+      <div
+        class="rounded shadow p-4 flex flex-col justify-between
+          {% if territory.visit_status == 'today' %}bg-green-100 border border-green-300
+          {% elif territory.visit_status == 'old' %}bg-red-100 border border-red-300
+          {% elif territory.visit_status == 'warning' %}bg-orange-100 border border-orange-300
+          {% else %}bg-amber-50{% endif %}"
+      >
+        <!-- 카드 내용 동일 -->
         <h3 class="text-lg font-bold text-blue-800 mb-1">{{ territory.address1 }} {{ territory.address2 }}</h3>
         <h3 class="text-lg font-bold text-blue-800 mb-1">{{ territory.address_detail }}</h3>
         <p class="text-sm text-gray-600">메모: {{ territory.note }}</p>
@@ -40,37 +44,34 @@
         {% else %}
         <p class="mt-2 text-xs text-gray-400">📭 임명된 봉사자 없음</p>
         {% endif %}
-      </div>
 
-      <div class="mt-4 flex justify-between items-center pt-4 border-t">
-        <a href="{{ territory.map_link }}"
-           target="_blank"
-           class="inline-flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition whitespace-nowrap">
-          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none"
-               viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 20l-5.447-2.724A2 2 0 013 15.382V5.618a2 2 0 011.553-1.948L9 2m0 18l6-3m0 0l5.447 2.724A2 2 0 0021 18.382V8.618a2 2 0 00-1.553-1.948L15 6m0 9l-6 3m6-3V6m0 9V6"/>
-          </svg>
-          지도
-        </a>
-
-        <a href="{% url 'territory:user_territory_detail' territory.id %}"
-           class="inline-flex items-center space-x-1 px-3 py-1 bg-gray-700 text-white text-sm rounded hover:bg-gray-800 transition whitespace-nowrap">
-          자세히 보기
-          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none"
-               viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-        </a>
+        <div class="mt-4 flex justify-between items-center pt-4 border-t">
+          <a href="{{ territory.map_link }}"
+             target="_blank"
+             class="inline-flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition whitespace-nowrap">
+            지도
+          </a>
+          <a href="{% url 'territory:user_territory_detail' member_id territory.id %}"
+             class="inline-flex items-center space-x-1 px-3 py-1 bg-gray-700 text-white text-sm rounded hover:bg-gray-800 transition whitespace-nowrap">
+            자세히 보기
+          </a>
+        </div>
       </div>
     </div>
     {% endfor %}
   </div>
-{% else %}
-  <p class="text-center text-gray-500">등록된 구역이 없습니다.</p>
-{% endif %}
 
+  <!-- 네비게이션 버튼 -->
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  
+  <!-- 페이지네이션 (동그라미 점) -->
+  <div class="swiper-pagination"></div>
+</div>
+
+  {% else %}
+    <p class="text-center text-gray-500">등록된 구역이 없습니다.</p>
+  {% endif %}
 </div>
 
 <script>
@@ -86,6 +87,7 @@
     const todayStr = `${yyyy}-${mm}-${dd}`;
 
     cards.forEach(card => {
+      // data-last-visited-at 어트리뷰트가 없으면 아래는 동작 안함. 필요한 경우 template에서 data-last-visited-at 넣어주세요
       const lastVisitedAt = card.getAttribute("data-last-visited-at");
       if (lastVisitedAt === todayStr) {
         card.classList.remove("bg-amber-50");
@@ -95,5 +97,31 @@
   });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script>
+  const swiper = new Swiper('.mySwiper', {
+    slidesPerView: 1,          // 기본 1개 슬라이드 표시
+    spaceBetween: 16,          // 슬라이드 사이 여백 (px)
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: {   // sm 이상 (테블릿)
+        slidesPerView: 2,
+      },
+      768: {   // md 이상
+        slidesPerView: 3,
+      },
+      1024: {  // lg 이상 (PC)
+        slidesPerView: 4,
+      }
+    }
+  });
+</script>
 </body>
 </html>

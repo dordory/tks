@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.shortcuts import render, redirect,  get_object_or_404
+from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max, Q
@@ -9,7 +10,7 @@ from django.views.decorators.http import require_POST
 from datetime import timedelta, datetime
 
 from .models import Territory, VisitHistory, Congregation, TerritoryCategory
-from apps.member.models import Member
+from apps.member.models import Member, Group
 from .forms import VisitHistoryForm, TerritoryNoteForm
 from .forms import InlineVisitHistoryForm  # 이 폼을 따로 만들어야 합니다
 
@@ -42,24 +43,33 @@ def update_territory_info(request, territory_id):
     return redirect('territory:user_territory_detail', territory_id=territory.id)
 
 
+def user_groups_view(request):
+    groups = Group.objects.filter(active=True)
+    return render(request, "user_groups.html", {"groups": groups})
+
+
 def user_login_view(request):
-    if request.method == 'POST':
-        member_id = request.POST.get('member')
-        print(member_id)
-        if member_id:
-            request.session['member_id'] = member_id
-        return redirect('territory:user_assigned_territories')
+    group_id = request.GET.get("group_id")
+    if group_id:
+        members = Member.objects.filter(group_id=group_id)
+        return render(request, "territory/login.html", {
+            "members": members,
+            "group_id": group_id
+        })
+    else:
+        return redirect(reverse("territory:user_groups"))
 
-    members = Member.objects.all()
-    return render(request, 'territory/login.html', {'members': members})
 
-
-def user_assigned_territories(request):
-    member_id = request.session.get('member_id')
+def user_assigned_territories(request, member_id):
     if not member_id:
         return redirect('territory:user_login')
 
-    territories = Territory.objects.filter(assigned_to_id=member_id).annotate(last_visited_at=Max("visited_histories__visited_at")).order_by("last_visited_at")
+    territories = Territory.objects.filter(
+        assigned_to_id=member_id
+    ).annotate(
+        last_visited_at=Max("visited_histories__visited_at")
+    ).order_by("last_visited_at")
+
     today = datetime.now().date()
 
     for territory in territories:
@@ -82,10 +92,15 @@ def user_assigned_territories(request):
 
     return render(request, 'territory/user_assigned_territories.html', {
         'territories': territories,
+        'member_id': member_id,
     })
 
-def user_territory_detail(request, territory_id):
-    member_id = request.session.get('member_id')
+
+def user_territory_detail(request, member_id, territory_id):
+    #member_id = request.session.get('member_id')
+    #member_id = request.GET.get('member_id')
+    #territory_id = request.GET.get('territory_id')
+
     if not member_id:
         return redirect('territory:user_login')
 
@@ -103,11 +118,12 @@ def user_territory_detail(request, territory_id):
             visit.visited_at = timezone.now()
             visit.save()
             messages.success(request, "방문기록이 추가되었습니다")
-            return redirect('territory:user_territory_detail', territory_id=territory_id)
+            return redirect('territory:user_territory_detail', member_id=member_id, territory_id=territory_id)
     else:
         form = InlineVisitHistoryForm()
 
     return render(request, 'territory/user_territory_detail.html', {
+        'member_id': member_id,
         'territory': territory,
         'visits': visits,
         'categories': categories,
