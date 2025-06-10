@@ -82,6 +82,13 @@ class Territory(models.Model):
         blank=True,
         related_name='assigned_territories'
     )
+    private_assigned_to = models.ForeignKey(
+        'member.Member',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='private_territories'
+    )
 
     def __str__(self):
         return f"{self.name} ({self.code})"

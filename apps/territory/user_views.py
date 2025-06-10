@@ -70,6 +70,12 @@ def user_assigned_territories(request, member_id):
         last_visited_at=Max("visited_histories__visited_at")
     ).order_by("last_visited_at")
 
+    private_territories = Territory.objects.filter(
+        private_assigned_to_id=member_id
+    ).annotate(
+        last_visited_at=Max("visited_histories__visited_at")
+    ).order_by("last_visited_at")
+
     today = datetime.now().date()
 
     for territory in territories:
@@ -90,9 +96,28 @@ def user_assigned_territories(request, member_id):
             territory.last_visited_at = None
             territory.visit_status = "none"
 
+    for territory in private_territories:
+        if territory.last_visit:
+            territory.last_visited_status = territory.last_visit().status
+            territory.last_visited_at = territory.last_visit().visited_at.astimezone(ZoneInfo("Asia/Tokyo"))
+            delta_days = (today - territory.last_visit().visited_at.date()).days
+            if territory.last_visit().visited_at.date() == today:
+                territory.visit_status = "today"
+            elif delta_days >= 60:
+                territory.visit_status = "old"
+            elif delta_days >= 30:
+                territory.visit_status = "warning"
+            else:
+                territory.visit_status = "normal"
+        else:
+            territory.last_visited_status = None
+            territory.last_visited_at = None
+            territory.visit_status = "none"
+
     return render(request, 'territory/user_assigned_territories.html', {
         'territories': territories,
         'member_id': member_id,
+        'private_territories': private_territories,
     })
 
 
