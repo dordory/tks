@@ -6,6 +6,11 @@ class Group(models.Model):
     name = models.CharField(max_length=100)
     active = models.BooleanField(default=False)
 
+    symbol = models.CharField(max_length=10, default="🌳")
+    bg_color = models.CharField(max_length=64, default="bg-stone-100")
+    tile_bg_color = models.CharField(max_length=64, default="bg-amber-50")
+    text_color = models.CharField(max_length=64, default="text-gray-700")
+
     def __str__(self):
         return self.name
 

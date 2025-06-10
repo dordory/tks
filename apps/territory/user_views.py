@@ -52,9 +52,11 @@ def user_login_view(request):
     group_id = request.GET.get("group_id")
     if group_id:
         members = Member.objects.filter(group_id=group_id)
+        group = Group.objects.get(id=group_id)
         return render(request, "territory/login.html", {
             "members": members,
-            "group_id": group_id
+            "group_id": group_id,
+            "group": group,
         })
     else:
         return redirect(reverse("territory:user_groups"))

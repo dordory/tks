@@ -31,21 +31,21 @@
 
   <!-- ✅ Header -->
   <header class="bg-white shadow">
-    <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-      <h1 class="text-2xl font-bold text-gray-800">📍 Territory Management</h1>
+    <div class="max-w-7xl text-center px-4 py-4 sm:px-6 lg:px-8">
+      <h1 class="text-xl font-bold text-gray-800">{% block header %}📍 Territory Management{% endblock %}</h1>
     </div>
   </header>
 
   <!-- ✅ Main Content -->
   <main class="flex-grow">
-    <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 bg-sky-50 rounded-xl">
       {% block content %}{% endblock %}
     </div>
   </main>
 
   <!-- ✅ Footer -->
   <footer class="bg-gray-200 text-center text-sm text-gray-600 py-4">
-    &copy; {{ now.year }} Territory Management System
+    &copy; {{ now.year }} 신주쿠코리안회중 구역관리 시스템
   </footer>
 
 </body>

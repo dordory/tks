@@ -25,8 +25,9 @@ urlpatterns = [
     path("select-member/", user_views.select_member_view, name="select_member"),
     path("territories/<int:territory_id>/update_info/", user_views.update_territory_info, name="update_territory_info"),
 
+    path('', user_views.user_groups_view, name="user_groups"),
     path('user/groups/', user_views.user_groups_view, name="user_groups"),
-    path('user/login/', user_views.user_login_view, name='user_login'),
+    path('user/users/', user_views.user_login_view, name='user_login'),
     path('user/<int:member_id>/territories/', user_views.user_assigned_territories, name="user_assigned_territories"),
     path("user/<int:member_id>/territory/<int:territory_id>/", user_views.user_territory_detail, name="user_territory_detail"),
 ]
