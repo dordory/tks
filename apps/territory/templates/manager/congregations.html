@@ -21,7 +21,7 @@
             class="bg-white border-gray-200 border rounded-xl shadow p-4 sm:p-5 flex flex-col justify-between min-h-[160px] hover:shadow-lg transition">
         {% endif %}
           <div class="flex-grow">
-            <h2 class="text-base sm:text-lg font-semibold mb-1 break-keep
+            <h2 class="text-base sm:text-lg font-semibold mb-1 break-keep break-words whitespace-normal
               {% if congregation.service_coverage < 50 or congregation.old_territory_count > 100 %}
                 text-red-700
               {% else %}
