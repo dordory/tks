@@ -1,6 +1,9 @@
 {% extends "base_with_tailwind.html" %}
 {% block content %}
-<div class="max-w-5xl mx-auto mt-10 bg-white p-6 rounded shadow">
+
+{% include "includes/messages.html" %}
+
+<div class="max-w-5xl mx-auto mt-1 bg-white p-6 rounded shadow">
     <!-- 🔙 위쪽 되돌아가기 링크 -->
     <div class="mb-4 text-center">
         <a href="{% url 'territory_manager:select_congregation' %}" class="text-blue-600 hover:underline text-sm">
@@ -8,20 +11,22 @@
         </a>
     </div>
 
-    <h2 class="text-2xl font-bold mb-4">📋 {{ congregation.name }} - Territory 목록</h2>
+    <h2 class="text-2xl font-bold mb-4">📋 {{ congregation.name }}</h2>
 
     <form method="post">
     {% csrf_token %}
-    <div class="overflow-x-auto">
+
+    <!-- ✅ Responsive Table -->
+    <div class="hidden md:block overflow-x-auto">
         <table class="min-w-full text-sm text-left border">
             <thead class="bg-gray-100">
                 <tr>
                     <th class="p-2"><input type="checkbox" id="select_all" onclick="toggleAll(this)"></th>
-                    <th class="p-2">Code</th>
-                    <th class="p-2">Address</th>
-                    <th class="p-2">Detail</th>
-                    <th class="p-2">Last Visit</th>
-                    <th class="p-2">Assigned To</th>
+                    <th class="p-2">코드</th>
+                    <th class="p-2">주소</th>
+                    <th class="p-2">상세정보</th>
+                    <th class="p-2">최근방문</th>
+                    <th class="p-2">임명된 봉사자</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,18 +54,51 @@
         </table>
     </div>
 
-    <div class="flex items-center mt-4 space-x-4">
-        <select name="member_id" class="border rounded px-2 py-1">
+    <!-- ✅ Mobile Card View -->
+    <div class="md:hidden space-y-4">
+        {% for territory in page_obj %}
+        <div class="border rounded p-4 shadow-sm {{ territory.row_class }}">
+            <div class="flex items-center justify-between mb-2">
+                <span class="font-semibold">{{ territory.code }}</span>
+                <input type="checkbox" name="selected_territories" value="{{ territory.id }}">
+            </div>
+            <div class="text-sm">
+                <div><span class="font-medium">주소:</span> {{ territory.address1 }} {{ territory.address2 }}</div>
+                <div class="text-gray-600 text-xs mb-1">{{ territory.address_detail }}</div>
+                <div><span class="font-medium">마지막 방문:</span>
+                    {% if territory.last_visit %}
+                        {{ territory.last_visit.visited_at|date:"Y-m-d" }}
+                    {% else %}
+                        <span class="text-gray-400">없음</span>
+                    {% endif %}
+                </div>
+                <div><span class="font-medium">임명된 봉사자:</span> {{ territory.assigned_to.name|default:"-" }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ✅ Action Buttons -->
+    <div class="flex flex-wrap items-center mt-4 gap-2">
+        <select name="member_id" id="member_id" class="border rounded px-2 py-1 w-full sm:w-auto">
             <option value="">멤버 선택</option>
             {% for member in members %}
             <option value="{{ member.id }}">{{ member.name }}</option>
             {% endfor %}
         </select>
 
-        <button name="action" value="assign" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+        <button id="assignBtn" name="action" value="assign"
+            class="bg-blue-500 text-white px-3 py-1 rounded
+            hover:bg-blue-600 
+            disabled:bg-blue-300 disabled:cursor-not-allowed disabled:hover:bg-blue-300 disabled:opacity-50"
+            disabled>
             할당
         </button>
-        <button name="action" value="unassign" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+        <button id="unassignBtn" name="action" value="unassign"
+            class="bg-red-500 text-white px-3 py-1 rounded
+            hover:bg-red-600
+            disabled:bg-red-300 disabled:cursor-not-allowed disabled:hover:bg-red-300 disabled:opacity-50"
+            disabled>
             할당 취소
         </button>
     </div>
@@ -89,10 +127,28 @@
 
 <script>
 function toggleAll(source) {
-    checkboxes = document.getElementsByName('selected_territories');
+    const checkboxes = document.getElementsByName('selected_territories');
     for (let i = 0; i < checkboxes.length; i++) {
         checkboxes[i].checked = source.checked;
     }
 }
+
+// 버튼 활성/비활성 처리
+document.addEventListener("DOMContentLoaded", function () {
+    const memberSelect = document.getElementById("member_id");
+    const assignBtn = document.getElementById("assignBtn");
+    const unassignBtn = document.getElementById("unassignBtn");
+
+    function updateButtonState() {
+        const isSelected = memberSelect.value !== "";
+        assignBtn.disabled = !isSelected;
+        unassignBtn.disabled = !isSelected;
+    }
+
+    memberSelect.addEventListener("change", updateButtonState);
+
+    // 초기 상태 설정
+    updateButtonState();
+});
 </script>
 {% endblock %}

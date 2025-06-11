@@ -58,11 +58,21 @@ def manager_territory_list_view(request, pk):
     if request.method == "POST":
         action = request.POST.get("action")
         territory_ids = request.POST.getlist("selected_territories")
+        if not territory_ids:
+            messages.error(request, "구역을 하나 이상 선택해주세요")
+            return redirect("territory_manager:territory_list", pk=pk)
         selected_territories = Territory.objects.filter(id__in=territory_ids)
 
         if action == "assign":
             member_id = request.POST.get("member_id")
-            member = get_object_or_404(Member, id=member_id)
+            try:
+                member = get_object_or_404(Member, id=member_id)
+            except ValueError:
+                messages.error(request, "올바른 멤버를 선택해주세요")
+                return redirect("territory_manager:territory_list", pk=pk)
+            except Member.DoesNotExist:
+                messages.error(request, "선택한 멤버가 존재하지 않습니다.")
+                return redirect("territory_manager:territory_list", pk=pk)
             selected_territories.update(assigned_to=member)
             messages.success(request, f"{len(selected_territories)}개 구역이 {member.name}님에게 할당되었습니다.")
         elif action == "unassign":
