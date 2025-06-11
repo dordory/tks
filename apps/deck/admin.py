@@ -70,7 +70,7 @@ class DeckAdmin(admin.ModelAdmin):
     def get_territories_by_congregation(self, request):
         congregation_id = request.GET.get('congregation_id')
         territories = Territory.objects.filter(congregation_id=congregation_id, deck__isnull=True)
-        data = [{'id': t.id, 'name': str(t)} for t in territories]
+        data = [{'id': t.id, 'name': str(t), 'address': t.address1 + " " + t.address2} for t in territories]
         return JsonResponse(data, safe=False)
 
     def territory_count(self, obj):

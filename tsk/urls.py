@@ -20,10 +20,10 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),    # Django 기본 관리자
 
-    path("manager/", include("apps.territory.urls_manager", namespace="territory_manager")),    # manager용 views
+    path("conductor/", include("apps.territory.urls_manager", namespace="territory_manager")),    # manager용 views
 
     path('', include('apps.territory.urls', namespace='territory')),  # user용 views
     path('', include("apps.territory.urls_admin", namespace='admin_uploads')), # admin용 views
     path('', include('apps.member.urls', namespace='member')),
-
+    path('', include('apps.deck.urls', namespace='deck')),
 ]

@@ -14,10 +14,10 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
       {% for congregation in congregations %}
         {% if congregation.service_coverage < 50 or congregation.old_territory_count > 100 %}
-            <a href="/manager/congregation/{{ congregation.id }}/territories/"
+            <a href="/conductor/congregation/{{ congregation.id }}/territories/"
             class="bg-red-100 border-red-300 border rounded-xl shadow p-4 sm:p-5 flex flex-col justify-between min-h-[160px] hover:shadow-lg transition">
         {% else %}
-            <a href="/manager/congregation/{{ congregation.id }}/territories/"
+            <a href="/conductor/congregation/{{ congregation.id }}/territories/"
             class="bg-white border-gray-200 border rounded-xl shadow p-4 sm:p-5 flex flex-col justify-between min-h-[160px] hover:shadow-lg transition">
         {% endif %}
           <div class="flex-grow">

@@ -81,7 +81,7 @@ def user_assigned_territories(request, member_id):
     today = datetime.now().date()
 
     for territory in territories:
-        if territory.last_visit:
+        if territory.last_visit():
             territory.last_visited_status = territory.last_visit().status
             territory.last_visited_at = territory.last_visit().visited_at.astimezone(ZoneInfo("Asia/Tokyo"))
             delta_days = (today - territory.last_visit().visited_at.date()).days

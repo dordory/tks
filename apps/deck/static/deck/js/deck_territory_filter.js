@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     data.forEach(t => {
                         const option = document.createElement('option');
                         option.value = t.id;
-                        option.textContent = t.name;
+                        option.textContent = t.address;
                         territorySelect.appendChild(option);
                     });
                 });

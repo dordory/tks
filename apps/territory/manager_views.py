@@ -74,7 +74,7 @@ def manager_territory_list_view(request, pk):
                 messages.error(request, "선택한 멤버가 존재하지 않습니다.")
                 return redirect("territory_manager:territory_list", pk=pk)
             selected_territories.update(assigned_to=member)
-            messages.success(request, f"{len(selected_territories)}개 구역이 {member.name}님에게 할당되었습니다.")
+            messages.success(request, f"{len(selected_territories)}개 구역이 {member.name}형제|자매 에게 할당되었습니다.")
         elif action == "unassign":
             selected_territories.update(assigned_to=None)
             messages.success(request, f"{len(selected_territories)}개 구역의 할당이 취소되었습니다.")
