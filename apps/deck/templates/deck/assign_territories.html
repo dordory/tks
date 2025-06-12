@@ -1,10 +1,19 @@
 {% extends "base_with_tailwind.html" %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto py-6">
+<div class="max-w-4xl mx-auto py-6 relative">
+  <!-- deck_list로 돌아가기 링크 -->
+  <a href="{% url 'deck:deck_list' %}"
+      class="fixed top-25 right-5 mt-2 mr-2 bg-blue-600 text-white text-sm px-3 py-1.5 rounded-full shadow-lg hover:bg-blue-700 transition z-50">
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+    </svg>
+  </a>
+
   <h2 class="text-2xl font-bold mb-6">📦 {{ selected_deck.name }} 봉사구역 할당하기</h2>
 
-  <!-- Dock에 포함되어 있는 구역리스트를 표시 시작 -->
+  <!-- Deck에 포함되어 있는 구역리스트를 표시 시작 -->
   <form method="POST" action="{% url 'deck:remove_territories_from_deck' selected_deck.id %}">
     {% csrf_token %}
     <div class="mb-6 border border-gray-300 rounded-lg p-4 shadow-sm bg-white">
@@ -57,7 +66,7 @@
       {% endif %}
     </div>
   </form>
-  <!-- Dock에 포함되어 있는 구역리스트를 표시 끝 -->
+  <!-- Deck에 포함되어 있는 구역리스트를 표시 끝 -->
 
   <!-- Deck에 포함시킬 구역 데이터 푯시 시작  -->
   <div class="mb-6 border border-gray-300 rounded-lg p-4 shadow-sm bg-white">
