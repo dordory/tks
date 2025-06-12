@@ -11,10 +11,17 @@
   <div class="max-w-7xl mx-auto">
     <h2 class="text-2xl font-bold mb-6 text-gray-800">📦 Deck 목록</h2>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-3 gap-4
+                sm:grid-cols-1
+                md:grid-cols-2
+                lg:grid-cols-3">
       {% for deck in decks %}
         <a href="{% url 'deck:assign_territories_to_deck' deck.id %}"
-           class="bg-white border border-gray-200 rounded-xl shadow p-5 hover:shadow-md transition">
+           class="border border-gray-200 rounded-xl shadow p-5 hover:shadow-md transition
+           {% if deck.territories.count == 0 %} bg-red-200
+           {% elif deck.territories.count <= 30 %} bg-amber-100
+           {% else %} bg-lime-100
+           {% endif %}">
           <h3 class="text-lg font-semibold text-blue-800 break-words">{{ deck.name }}</h3>
           <p class="text-sm text-gray-600 mt-1">구역 수: {{ deck.territories.count }}</p>
         </a>

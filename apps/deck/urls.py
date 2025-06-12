@@ -8,5 +8,4 @@ urlpatterns = [
     path('decks/', decks_view, name='deck_list'),
     path('deck/<int:pk>/update', assign_territories_to_deck_view, name='assign_territories_to_deck'),
     path('deck/<int:pk>/remove_territories/', remove_territories_from_deck, name='remove_territories_from_deck'),
-
 ]

@@ -1,10 +1,14 @@
 # apps/territory/manager_views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from apps.territory.models import Congregation, Territory, Member
+from django.views.decorators.http import require_http_methods
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db.models import Max, Q
 from datetime import datetime, timezone, timedelta
+
+from apps.territory.models import Congregation, Territory, Member
+from apps.deck.models import Deck
+from apps.member.models import Member
 
 
 def congregations_view(request):
@@ -86,3 +90,115 @@ def manager_territory_list_view(request, pk):
         "page_obj": page_obj,
         "members": members,
     })
+
+
+def deck_list_view(request):
+    decks = Deck.objects.all()
+    for deck in decks:
+        assigned_count = deck.territories.filter(assigned_to__isnull=False).count
+        deck.assigned_count = assigned_count
+        deck.non_assigned_count = deck.territories.filter(assigned_to__isnull=True).count
+    return render(request, 'manager/decks.html', {'decks': decks})
+
+
+@require_http_methods(["GET", "POST"])
+def assign_territory_to_member_view(request, pk):
+    deck = get_object_or_404(Deck, pk=pk)
+    members = Member.objects.all()
+    territories = deck.territories.filter(assigned_to__isnull=True)
+
+    print("--- 1 ---")
+    if request.method == "POST":
+        print("--- 2 ---")
+        member_id = request.POST.get("member")
+        print("--- 3 --- member_id : ", member_id)
+        territory_ids = request.POST.getlist("territory_ids")
+        print("--- 4 --- territory_ids : ", territory_ids)
+
+        if member_id and territory_ids:
+            print("--- 5 ---")
+            member = get_object_or_404(Member, pk=member_id)
+            print("--- 6 ---")
+            Territory.objects.filter(id__in=territory_ids).update(assigned_to=member)
+            print("--- 7 ---")
+
+        return redirect("territory_manager:assign_territories_to_member", pk=pk)
+
+    context = {
+        "selected_deck": deck,
+        "members": members,
+        "territories": territories,
+    }
+    return render(request, "manager/assign_territories.html", context)
+'''
+    deck_territories = selected_deck.territories.all() or None
+    if deck_territories:
+        for territory in deck_territories:
+            if territory.last_visit():
+                territory.last_visited_status = territory.last_visit().status
+                territory.last_visited_at = territory.last_visit().visited_at.astimezone(ZoneInfo("Asia/Tokyo"))
+                delta_days = (today - territory.last_visit().visited_at.date()).days
+                if territory.last_visit().visited_at.date() == today:
+                    territory.visit_status = "today"
+                elif delta_days >= 60:
+                    territory.visit_status = "old"
+                elif delta_days >= 30:
+                    territory.visit_status = "warning"
+                else:
+                    territory.visit_status = "normal"
+            else:
+                territory.last_visited_status = None
+                territory.last_visited_at = None
+                territory.visit_status = "none"
+
+    if request.method == 'GET':
+        print(request.GET)
+        congregation_id = request.GET.get('congregation')
+        if congregation_id:
+            try:
+                selected_congregation = Congregation.objects.get(id=congregation_id)
+                territories = selected_congregation.territories.filter(deck__isnull=True)
+
+                for territory in territories:
+                    if territory.last_visit():
+                        territory.last_visited_status = territory.last_visit().status
+                        territory.last_visited_at = territory.last_visit().visited_at.astimezone(ZoneInfo("Asia/Tokyo"))
+                        delta_days = (today - territory.last_visit().visited_at.date()).days
+                        if territory.last_visit().visited_at.date() == today:
+                            territory.visit_status = "today"
+                        elif delta_days >= 60:
+                            territory.visit_status = "old"
+                        elif delta_days >= 30:
+                            territory.visit_status = "warning"
+                        else:
+                            territory.visit_status = "normal"
+                    else:
+                        territory.last_visited_status = None
+                        territory.last_visited_at = None
+                        territory.visit_status = "none"
+            except Congregation.DoesNotExist:
+                pass
+    elif request.method == 'POST':
+        territory_ids = request.POST.getlist('territory_ids')
+        deck_id = request.POST.get('deck_id')
+
+        if deck_id and territory_ids:
+            try:
+                deck = Deck.objects.get(id=deck_id)
+                selected_territories = Territory.objects.filter(id__in=territory_ids)
+                selected_territories.update(deck=deck)
+                return redirect('deck:assign_territories_to_deck', pk=deck_id)
+            except Deck.DoesNotExist:
+                pass
+
+    context = {
+        'congregations': congregations,
+        'selected_congregation': selected_congregation,
+        'territories': territories,
+        'decks': Deck.objects.all(),
+        'selected_deck': selected_deck,
+        'deck_territories': deck_territories,
+    }
+
+    return render(request, 'deck/assign_territories.html', context)
+'''
