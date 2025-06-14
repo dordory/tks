@@ -18,7 +18,8 @@ from .forms import InlineVisitHistoryForm  # 이 폼을 따로 만들어야 합�
 @require_POST
 def update_territory_info(request, territory_id):
     territory = get_object_or_404(Territory, pk=territory_id)
-    member_id = request.session.get('member_id')
+    member_id = request.POST.get('member_id')
+    print("member_id : ", member_id)
 
     if not member_id or territory.assigned_to_id != int(member_id):
         messages.error(request, "정보를 변경할 수 없습니다.")
@@ -40,7 +41,7 @@ def update_territory_info(request, territory_id):
 
     territory.save()
     messages.success(request, "구역 정보가 업데이트되었습니다.")
-    return redirect('territory:user_territory_detail', territory_id=territory.id)
+    return redirect('territory:user_territory_detail', territory_id=territory.id, member_id=member_id)
 
 
 def user_groups_view(request):
