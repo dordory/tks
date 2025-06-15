@@ -14,13 +14,13 @@ urlpatterns = [
     path("territories/", user_views.territory_list, name="territory_list"),
     path("territories/<int:pk>/", user_views.territory_detail_view, name="territory_detail"),
     path("territories/<int:territory_id>/visit/add/", user_views.visit_history_create_view, name='visit_add'),
+    path('territories/<int:territory_id>/update_note/', user_views.update_territory_note, name='update_note'),
 
     path("congregations/", user_views.congregation_list_view, name="congregation_list"),
     path("congregations/<int:pk>/territories/", user_views.territories_by_congregation_view, name="congregation_territories"),
     path('congregations/<int:congregation_id>/territories/<int:territory_id>/detail/',
           user_views.territory_detail_from_congregation,
           name='territory_detail_from_congregation'),
-    path('territories/<int:territory_id>/update_note/', user_views.update_territory_note, name='update_note'),
 
     path("select-member/", user_views.select_member_view, name="select_member"),
     path("territories/<int:territory_id>/update_info/", user_views.update_territory_info, name="update_territory_info"),

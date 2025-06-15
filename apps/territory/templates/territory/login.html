@@ -15,7 +15,8 @@
 
             <div class="flex-grow">
                 <h2 class="text-base sm:text-lg font-bold text-blue-800 mb-1 break-keep {{ group.text_color }}">{{ member.name }}</h2>
-                <p class="text-sm {{ group.text_color }}">그룹: {{ member.group.name }}</p>
+                <p class="text-sm {{ group.text_color }}">배정된 구역수 : {{ member.assigned_territories.count }}</p>
+                <p class="text-sm {{ group.text_color }}">그룹 : {{ member.group.name }}</p>
                 <!-- p class="text-sm text-gray-500 mt-1 text-xs">전화번호: {{ member.phone_number }}</p -->
             </div>
         </a>
